@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const commander = require('commander');
+const colors = require('colors');
 const Disassembler = require('./lib/disassembler.js');
 
 commander
@@ -8,6 +9,7 @@ commander
   .option('-f, --file <file>', 'file to be disassembled')
   .option('-b, --buffer <buffer>', 'read buffer from arg')
   .option('-o, --offset <offset>', 'offset to read from')
+  .option('-s, --syntax <syntax>', 'assembly syntax')
   .option('-a, --arch <arch>', 'file architecture')
   .option('-m, --mode <mode>', 'file mode')
   .option('-v, --verbose', 'verbose output')
@@ -21,7 +23,7 @@ if(commander.verbose) {
   console.log('Mode:   ' + commander.mode);
 }
 
-const disassembler = new Disassembler(commander.arch, commander.mode);
+const disassembler = new Disassembler(commander.arch, commander.mode, commander.syntax); // does syntax even do smth?
 
 process.on('exit', function() {
   disassembler.close();
@@ -29,5 +31,15 @@ process.on('exit', function() {
 
 if(commander.buffer) {
   var buffer = commander.buffer.split(',').map(Number);
-  disassembler.disassemble(Buffer.from(buffer), parseInt(commander.offset));
+  var instructions = disassembler.disassemble(Buffer.from(buffer), parseInt(commander.offset));
+  print(instructions);
+}
+
+function print(instructions) {
+  instructions.forEach(function(instruction) {
+    console.log(
+      "0x%s:".cyan + "\t%s".green + "\t%s".magenta,
+      instruction.address, instruction.opcode, instruction.operand,
+    );
+  });
 }
