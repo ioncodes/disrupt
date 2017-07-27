@@ -139,7 +139,6 @@ case 'BE':
 # Features
 
 - [x] Disassemble from buffer
-- [ ] Disassemble from file
+- [x] Disassemble from file
 - [ ] Auto detect architecture and mode
-- [ ] Choose assembly syntax
-- [ ] Assembly syntax highlighting
+- [ ] Assembly syntax highlighting (party implemented)
