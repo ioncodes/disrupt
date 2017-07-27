@@ -9,13 +9,12 @@ commander
   .option('-f, --file <file>', 'file to be disassembled')
   .option('-b, --buffer <buffer>', 'read buffer from arg')
   .option('-o, --offset <offset>', 'offset to read from')
-  .option('-s, --syntax <syntax>', 'assembly syntax')
   .option('-a, --arch <arch>', 'file architecture')
   .option('-m, --mode <mode>', 'file mode')
   .option('-v, --verbose', 'verbose output')
   .parse(process.argv);
 
-if(commander.verbose) {
+if (commander.verbose) {
   console.log('File:   ' + commander.file);
   console.log('Buffer: ' + commander.buffer);
   console.log('Offset: ' + commander.offset);
@@ -23,13 +22,16 @@ if(commander.verbose) {
   console.log('Mode:   ' + commander.mode);
 }
 
-const disassembler = new Disassembler(commander.arch, commander.mode, commander.syntax); // does syntax even do smth?
+const disassembler = new Disassembler(commander.arch, commander.mode);
 
 process.on('exit', function() {
+  if (commander.verbose) {
+    console.log('Closing buffer');
+  }
   disassembler.close();
 });
 
-if(commander.buffer) {
+if (commander.buffer) {
   var buffer = commander.buffer.split(',').map(Number);
   var instructions = disassembler.disassemble(Buffer.from(buffer), parseInt(commander.offset));
   print(instructions);
